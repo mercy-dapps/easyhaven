@@ -16,13 +16,13 @@ pub mod easyhaven {
     use super::*;
 
     pub fn initialize_owner(
-        ctx: Context<InitializeUser>, 
+        ctx: Context<InitializeOwner>, 
         name: String,
         email: String,
         phone_number: String,
         location: String,
      ) -> Result<()> {
-        ctx.accounts.create_user(
+        ctx.accounts.create_owner(
             name,
             email,
             phone_number,

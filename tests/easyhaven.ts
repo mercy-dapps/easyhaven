@@ -27,38 +27,21 @@ describe("easyhaven", () => {
   }
 
   const mercy_owner = PublicKey.findProgramAddressSync(
-    [Buffer.from("user"), owner.publicKey.toBuffer()],
+    [Buffer.from("owner"), owner.publicKey.toBuffer()],
     program.programId
   )[0];
 
-  // const mercy_buyer = PublicKey.findProgramAddressSync(
-  //   [Buffer.from("user"), buyer.publicKey.toBuffer()],
-  //   program.programId
-  // )[0];
-
   const ownerAccounts = {
     propertyOwner: mercy_owner,
-    user: owner.publicKey,
+    owner: owner.publicKey,
   };
-
-  // const buyerAccounts = {
-  //   propertyOwner: mercy_buyer,
-  //   user: buyer.publicKey,
-  // };
 
   const mercyOwner = {
     name: "Mercy Adams",
-    email: "mercy@wiseki.com",
+    email: "mercy@owner.com",
     phone_number: "08065980493",
     location: "Ibadan, Nigeria",
   };
-
-  // const mercyBuyer = {
-  //   name: "Mercy Wumi",
-  //   email: "m.adams1909@gmail.com",
-  //   phone_number: "08023849990",
-  //   location: "Abuja, Nigeria",
-  // };
 
   it("airdrop", async () => {
     await Promise.all([owner, buyer].map((a) => airdropSol(a.publicKey, 1e9)));
@@ -77,20 +60,4 @@ describe("easyhaven", () => {
 
     console.log(`Owner: ${JSON.stringify(ownerAccount)}`);
   });
-
-  // it("Create Mercy Buyer", async () => {
-  //   const { name, email, phone_number, location } = mercyBuyer;
-
-  //   await program.methods
-  //     .initializeOwner(name, email, phone_number, location)
-  //     .accounts({
-  //       ...buyerAccounts,
-  //     })
-  //     .signers([buyer])
-  //     .rpc();
-
-  //   const buyerAccount = await program.account.propertyOwner.fetch(mercy_buyer);
-
-  //   console.log(`Owner: ${JSON.stringify(buyerAccount)}`);
-  // });
 });
