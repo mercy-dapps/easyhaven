@@ -15,27 +15,8 @@ declare_id!("DpBVVak7xw7kb2de3xzADGJ6tBgf8vkGKtXCCNtTMXey");
 pub mod easyhaven {
     use super::*;
 
-    pub fn initialize_owner(
-        ctx: Context<InitializeOwner>, 
-        name: String,
-        email: String,
-        phone_number: String,
-        location: String,
-     ) -> Result<()> {
-        ctx.accounts.create_owner(
-            name,
-            email,
-            phone_number,
-            location,
-            &ctx.bumps
-        )?;
-
-        Ok(())
-
-    }
-
-    pub fn initialize_user(
-        ctx: Context<InitializeUser>, 
+    pub fn create_user(
+        ctx: Context<CreateUser>, 
         name: String,
         email: String,
         phone_number: String,
@@ -53,27 +34,52 @@ pub mod easyhaven {
     }
 
     pub fn become_a_host(ctx: Context<BecomeAHost>) -> Result<()> {
-        ctx.accounts.become_a_host()?;
+        ctx.accounts.become_a_host(&ctx.bumps)?;
 
         Ok(())
     }
 
-    pub fn update_user(
-        ctx: Context<UpdateUser>,
+    pub fn update_buyer_info(
+        ctx: Context<UpdateBuyerInfo>,
         gender: Option<Gender>,
         profile_picture: Option<String>,
         bio: Option<String>,
         profession: Option<String>,
-        languages_spoken: Option<Vec<String>>,
+
+        interest_properties: Option<Vec<String>>,
+        locations_preferred: Option<Vec<String>>,
         budgets: Option<u32>
     ) -> Result<()> {
-        ctx.accounts.update_user(
+        ctx.accounts.update_buyer_info(
             gender,
             profile_picture,
             bio,
             profession,
-            languages_spoken,
+
+            interest_properties,
+            locations_preferred,
             budgets
+        )?;
+
+        Ok(())
+    }
+
+    pub fn update_owner_info(
+        ctx: Context<UpdateOwnerInfo>,
+        gender: Option<Gender>,
+        profile_picture: Option<String>,
+        bio: Option<String>,
+        profession: Option<String>,
+
+        languages_spoken: Option<Vec<String>>
+    ) -> Result<()> {
+        ctx.accounts.update_owner_info(
+            gender,
+            profile_picture,
+            bio,
+            profession,
+
+            languages_spoken
         )?;
 
         Ok(())

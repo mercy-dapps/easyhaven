@@ -34,29 +34,6 @@ pub struct Review {
     pub timestamp: i64,
 }
 
-// owner informations struct
-#[derive(AnchorSerialize, AnchorDeserialize, Clone, InitSpace, Default)]
-pub struct OwnerInfo {
-    pub listings: u8,
-    #[max_len(5, 50)]
-    pub languages_spoken: Vec<String>,
-    #[max_len(50)]
-    pub ratings: Vec<f32>,
-    #[max_len(100)]
-    pub reviews: Vec<Review>,
-}
-
-// buyer informations struct
-#[derive(AnchorSerialize, AnchorDeserialize, Clone, InitSpace, Default)]
-pub struct BuyerInfo {
-     #[max_len(3, 50)]
-    pub interest_properties: Vec<String>,
-    #[max_len(5, 50)]
-    pub locations_preferred: Vec<String>,
-    pub budgets: u32,
-}
-
-
 #[account]
 #[derive(InitSpace, Default)]
 pub struct User {
@@ -84,10 +61,11 @@ pub struct User {
      #[max_len(50)]
     pub profession: String,
 
-    // only buyer/tenant
-    pub buyer_info: Option<BuyerInfo>,
-    // only owner
-    pub owner_info: Option<OwnerInfo>,
+    // only buyer/tenant (points to BuyerInfo PDA)
+    pub buyer_info: Option<Pubkey>,
+
+    // only owner (points to OwnerInfo PDA)
+    pub owner_info: Option<Pubkey>,
 
     pub bump: u8
 }

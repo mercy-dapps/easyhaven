@@ -1,31 +1,17 @@
 use anchor_lang::prelude::*;
 
-use crate::global::Gender;
+use crate::{Review};
 
 #[account]
 #[derive(InitSpace, Default)]
-pub struct PropertyOwner {
-    pub owner: Pubkey,
-    #[max_len(50)]
-    pub name: String,
-    #[max_len(50)]
-    pub email: String,
-    pub gender: Gender,
-    #[max_len(50)]
-    pub phone_number: String,
-     #[max_len(50)]
-    pub profession: String,
-    #[max_len(200)]
-    pub profile_picture: String,
-    #[max_len(1000)]
-    pub bio: String,
-    #[max_len(20, 100)]
-    pub reviews: Vec<String>,
-    pub ratings: f32,
-    #[max_len(100)]
-    pub location: String,
+pub struct OwnerInfo {
+    pub user: Pubkey,
     pub listings: u8,
-    #[max_len(5, 50)]
+    #[max_len(2, 30)]
     pub languages_spoken: Vec<String>,
+    #[max_len(50)]
+    pub ratings: Vec<f32>,
+    #[max_len(10)]
+    pub reviews: Vec<Review>,
     pub bump: u8
 }

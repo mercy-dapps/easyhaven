@@ -26,8 +26,13 @@ describe("easyhaven", () => {
     });
   }
 
-  const mercy_owner = PublicKey.findProgramAddressSync(
-    [Buffer.from("owner"), owner.publicKey.toBuffer()],
+  const mercy_owner_host = PublicKey.findProgramAddressSync(
+    [Buffer.from("owner"), user.publicKey.toBuffer()],
+    program.programId
+  )[0];
+
+  const mercy_buyer = PublicKey.findProgramAddressSync(
+    [Buffer.from("buyer"), user.publicKey.toBuffer()],
     program.programId
   )[0];
 
@@ -36,18 +41,11 @@ describe("easyhaven", () => {
     program.programId
   )[0];
 
-  const ownerAccounts = {
-    propertyOwner: mercy_owner,
-    owner: owner.publicKey,
+  const allAccounts = {
     user: mercy_user,
-    signer: user.publicKey,
-  };
-
-  const mercyOwner = {
-    name: "Mercy Adams",
-    email: "mercy@owner.com",
-    phone_number: "08065980493",
-    location: "Ibadan, Nigeria",
+    owner: mercy_owner_host,
+    userKey: user.publicKey,
+    buyer: mercy_buyer,
   };
 
   const mercyUser = {
@@ -62,34 +60,24 @@ describe("easyhaven", () => {
     profile_picture: "",
     bio: "A young beautiful girl",
     profession: "Smart Contract Engineer",
-    languages_spoken: ["English", "Yoruba", "Spanish"],
+
+    interest_properties: ["Self-contain", "room and parlour"],
+    locations_preferred: ["akobo", "bodija"],
     budgets: "2000000",
+
+    languages_spoken: [],
   };
 
   it("airdrop", async () => {
     await Promise.all([owner, user].map((a) => airdropSol(a.publicKey, 1e9)));
   });
 
-  it("Create Mercy Owner", async () => {
-    const { name, email, phone_number, location } = mercyOwner;
-
-    await program.methods
-      .initializeOwner(name, email, phone_number, location)
-      .accounts({ ...ownerAccounts })
-      .signers([owner])
-      .rpc();
-
-    const ownerAccount = await program.account.propertyOwner.fetch(mercy_owner);
-
-    console.log(`Owner: ${JSON.stringify(ownerAccount)}`);
-  });
-
   it("Create Mercy user", async () => {
     const { name, email, phone_number, location } = mercyUser;
 
     await program.methods
-      .initializeUser(name, email, phone_number, location)
-      .accounts({ ...ownerAccounts })
+      .createUser(name, email, phone_number, location)
+      .accounts({ ...allAccounts })
       .signers([user])
       .rpc();
 
@@ -98,12 +86,46 @@ describe("easyhaven", () => {
     console.log(`User: ${JSON.stringify(userAccount)}`);
   });
 
+  it("Mercy wants to update her buyer details", async () => {
+    const {
+      profile_picture,
+      bio,
+      profession,
+      interest_properties,
+      locations_preferred,
+      budgets,
+    } = updateMercyUser;
+
+    await program.methods
+      .updateBuyerInfo(
+        { female: {} },
+        profile_picture ?? null,
+        bio ?? null,
+        profession ?? null,
+        interest_properties ?? null,
+        locations_preferred ?? null,
+        budgets != null ? Number(budgets) : null
+      )
+      .accounts({
+        ...allAccounts,
+      })
+      .signers([user])
+      .rpc();
+
+    const userAccount = await program.account.user.fetch(mercy_user);
+    const buyerAccount = await program.account.buyerInfo.fetch(mercy_buyer);
+
+    console.log(`Buyer: ${JSON.stringify(buyerAccount)}`);
+    console.log(`User: ${JSON.stringify(userAccount.gender)}`);
+  });
+
   it("Mercy wants to become a host", async () => {
     await program.methods
       .becomeAHost()
-      .accounts({
-        user: mercy_user,
+      .accountsPartial({
+        ...allAccounts,
       })
+      .signers([user])
       .rpc();
 
     const userAccount = await program.account.user.fetch(mercy_user);
@@ -111,32 +133,34 @@ describe("easyhaven", () => {
     console.log(`User: ${JSON.stringify(userAccount)}`);
   });
 
-  // it("Mercy wants to update her details", async () => {
-  //   const {
-  //     gender,
-  //     profile_picture,
-  //     bio,
-  //     profession,
-  //     languages_spoken,
-  //     budgets,
-  //   } = updateMercyUser;
+  it("Mercy wants to update her owner details", async () => {
+    const {
+      profile_picture,
+      bio,
+      profession,
 
-  //   await program.methods
-  //     .updateUser(
-  //       { female: {} },
-  //       profile_picture ?? null,
-  //       bio ?? null,
-  //       profession ?? null,
-  //       languages_spoken ?? null,
-  //       budgets != null ? Number(budgets) : null
-  //     )
-  //     .accounts({
-  //       user: mercy_user,
-  //     })
-  //     .rpc();
+      languages_spoken,
+    } = updateMercyUser;
 
-  //   const userAccount = await program.account.user.fetch(mercy_user);
+    await program.methods
+      .updateOwnerInfo(
+        { male: {} },
+        profile_picture ?? null,
+        bio ?? null,
+        profession ?? null,
 
-  //   console.log(`User: ${JSON.stringify(userAccount)}`);
-  // });
+        languages_spoken ?? null
+      )
+      .accounts({
+        ...allAccounts,
+      })
+      .signers([user])
+      .rpc();
+
+    const userAccount = await program.account.user.fetch(mercy_user);
+    const ownerAccount = await program.account.ownerInfo.fetch(mercy_owner_host);
+
+    console.log(`Owner: ${JSON.stringify(ownerAccount)}`);
+    console.log(`User: ${JSON.stringify(userAccount)}`);
+  });
 });
