@@ -19,7 +19,8 @@ pub struct PropertyOwner {
     pub profile_picture: String,
     #[max_len(1000)]
     pub bio: String,
-    pub reviews: u32,
+    #[max_len(20, 100)]
+    pub reviews: Vec<String>,
     pub ratings: f32,
     #[max_len(100)]
     pub location: String,
