@@ -2,6 +2,7 @@ import * as anchor from "@coral-xyz/anchor";
 import { Program } from "@coral-xyz/anchor";
 import { Easyhaven } from "../target/types/easyhaven";
 import { Keypair, PublicKey } from "@solana/web3.js";
+import { randomBytes } from "crypto";
 
 describe("easyhaven", () => {
   // Configure the client to use the local cluster.
@@ -26,6 +27,8 @@ describe("easyhaven", () => {
     });
   }
 
+  const seed = new anchor.BN(randomBytes(8));
+
   const mercy_owner_host = PublicKey.findProgramAddressSync(
     [Buffer.from("owner"), user.publicKey.toBuffer()],
     program.programId
@@ -41,11 +44,21 @@ describe("easyhaven", () => {
     program.programId
   )[0];
 
+  const mercy_property = PublicKey.findProgramAddressSync(
+    [
+      Buffer.from("property"),
+      user.publicKey.toBuffer(),
+      seed.toArrayLike(Buffer, "le", 8),
+    ],
+    program.programId
+  )[0];
+
   const allAccounts = {
     user: mercy_user,
     owner: mercy_owner_host,
     userKey: user.publicKey,
     buyer: mercy_buyer,
+    property: mercy_property,
   };
 
   const mercyUser = {
@@ -53,6 +66,14 @@ describe("easyhaven", () => {
     email: "mercy@user.com",
     phone_number: "08012345678",
     location: "Abuja, Nigeria",
+  };
+
+  const mercyProperty = {
+    name: "A roof self contain",
+    details:
+      "A conducive and neat room self contain located in the heart of Ibadan city",
+    price: 200,
+    location: "Ibadan, Nigeria",
   };
 
   const updateMercyUser = {
@@ -158,9 +179,37 @@ describe("easyhaven", () => {
       .rpc();
 
     const userAccount = await program.account.user.fetch(mercy_user);
-    const ownerAccount = await program.account.ownerInfo.fetch(mercy_owner_host);
+    const ownerAccount = await program.account.ownerInfo.fetch(
+      mercy_owner_host
+    );
 
     console.log(`Owner: ${JSON.stringify(ownerAccount)}`);
     console.log(`User: ${JSON.stringify(userAccount)}`);
+  });
+
+  it("Create property", async () => {
+    const { name, price, location, details } = mercyProperty;
+
+    await program.methods
+      .createProperty(seed, name, details, price, location, { rental: {} })
+      .accounts({ ...allAccounts })
+      .signers([user])
+      .rpc();
+
+    const userAccount = await program.account.property.fetch(mercy_property);
+
+    console.log(`Property: ${JSON.stringify(userAccount)}`);
+  });
+
+  it("Approve property", async () => {
+    await program.methods
+      .approveProperty()
+      .accounts({ ...allAccounts })
+      .signers([user])
+      .rpc();
+
+    const appovedProperty = await program.account.property.fetch(mercy_property);
+
+    console.log(`Approve property: ${JSON.stringify(appovedProperty)}`);
   });
 });

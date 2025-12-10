@@ -84,4 +84,34 @@ pub mod easyhaven {
 
         Ok(())
     }
+
+     pub fn create_property(
+        ctx: Context<CreateProperty>, 
+        seed: u64,
+        name: String,
+        details: String,
+        price: u32,
+        location: String,
+        property_type: PropertyType,
+    ) -> Result<()> {
+        ctx.accounts.create_property(
+            seed,
+            name,
+            details,
+            price,
+            location,
+            property_type,
+            &ctx.bumps
+        )?;
+
+        Ok(())
+    }
+
+    pub fn approve_property(
+        ctx: Context<ApproveProperty>,    
+    ) -> Result<()> {
+        ctx.accounts.approve_property()?;
+
+        Ok(())
+    }
 }

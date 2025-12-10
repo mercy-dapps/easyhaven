@@ -36,7 +36,7 @@ impl<'info> BecomeAHost<'info>  {
 
         // create owner info account
         self.owner.set_inner(OwnerInfo { 
-            user: self.user.user_key,
+            user_key: self.user.user_key,
             bump: bumps.owner,
             ..Default::default()
         });

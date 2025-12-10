@@ -5,7 +5,7 @@ use crate::{Review};
 #[account]
 #[derive(InitSpace, Default)]
 pub struct OwnerInfo {
-    pub user: Pubkey,
+    pub user_key: Pubkey,
     pub listings: u8,
     #[max_len(2, 30)]
     pub languages_spoken: Vec<String>,

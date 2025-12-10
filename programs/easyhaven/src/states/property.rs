@@ -1,8 +1,9 @@
 use anchor_lang::prelude::*;
 
-#[derive(AnchorSerialize, AnchorDeserialize, Clone, PartialEq, Eq)]
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, PartialEq, Eq, Default)]
 pub enum PropertyType {
     Rental,
+    #[default]
     Ownership
 }
 
@@ -11,9 +12,10 @@ impl Space for PropertyType {
 }
 
 
-#[derive(AnchorSerialize, AnchorDeserialize, Clone, PartialEq, Eq)]
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, PartialEq, Eq, Default)]
 pub enum PaymentMode {
     Fiat,
+    #[default]
     Crypto
 }
 
@@ -22,10 +24,11 @@ impl Space for PaymentMode {
 }
 
 #[account]
-#[derive(InitSpace)]
+#[derive(InitSpace, Default)]
 
 pub struct Property {
-    pub owner: Pubkey,
+    pub user_key: Pubkey,
+    pub seed: u64,
     #[max_len(50)]
     pub name: String,
     #[max_len(1000)]
@@ -44,5 +47,9 @@ pub struct Property {
     pub terms_and_conditions: String,
     #[max_len(200)]
     pub agreement: String, // ipfs link to nft representing ownership/rental agreement
+    pub approved: bool,
     pub bump: u8
 }
+
+// creation of property would be in stages
+// possibly after the verification of property, then 
