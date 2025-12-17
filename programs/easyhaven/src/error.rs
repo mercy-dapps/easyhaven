@@ -12,5 +12,14 @@ pub enum EasyHavenErrors {
     NotAOwner,
 
     #[msg("Wrong Account provided")]
-    WrongAccount
+    WrongAccount,
+
+    #[msg("Wrong Property provided")]
+    WrongProperty, 
+
+    #[msg("Maximum length reached")]
+    MaxLengthReached,
+
+    #[msg("Text is too long.")]
+    TextTooLong,
 }

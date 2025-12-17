@@ -1,5 +1,7 @@
 use anchor_lang::prelude::*;
 
+use crate::Review;
+
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, PartialEq, Eq, Default)]
 pub enum PropertyType {
     Rental,
@@ -33,23 +35,34 @@ pub struct Property {
     pub name: String,
     #[max_len(1000)]
     pub details: String,
-    #[max_len(5, 200)]
+    #[max_len(5, 100)]
     pub pictures: Vec<String>,
-    pub num_of_owners: u8,
-    #[max_len(5, u32)]
-    pub list_of_owners: Vec<Pubkey>,
     pub price: u32,
     #[max_len(100)]
     pub location: String, // with google maps link
     pub property_type: PropertyType,
-    pub mode_of_payment: PaymentMode,
-    #[max_len(200)]
+      pub mode_of_payment: PaymentMode,
+    #[max_len(100)]
     pub terms_and_conditions: String,
-    #[max_len(200)]
+    #[max_len(100)]
     pub agreement: String, // ipfs link to nft representing ownership/rental agreement
+
     pub approved: bool,
+    pub liked_count: u64,
+
+    #[max_len(5)]
+    pub list_of_owners: Vec<Pubkey>,
+    #[max_len(10)]
+    pub liked_pubkey: Vec<Pubkey>,
+     #[max_len(10)]
+    pub saved_pubkey: Vec<Pubkey>,
+    #[max_len(10)]
+    pub rate: Vec<u8>,
+    #[max_len(10)]
+    pub reviews: Vec<Review>,
+    
     pub bump: u8
 }
 
 // creation of property would be in stages
-// possibly after the verification of property, then 
+// possibly after the verification of property

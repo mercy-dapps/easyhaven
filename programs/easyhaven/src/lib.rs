@@ -93,6 +93,7 @@ pub mod easyhaven {
         price: u32,
         location: String,
         property_type: PropertyType,
+        mode_of_payment: PaymentMode
     ) -> Result<()> {
         ctx.accounts.create_property(
             seed,
@@ -101,6 +102,7 @@ pub mod easyhaven {
             price,
             location,
             property_type,
+            mode_of_payment,
             &ctx.bumps
         )?;
 
@@ -114,4 +116,66 @@ pub mod easyhaven {
 
         Ok(())
     }
+
+    pub fn edit_property(
+        ctx: Context<EditProperty>, 
+        seed: u64,
+        name: Option<String>,
+        details: Option<String>,
+        mode_of_payment: PaymentMode
+    ) -> Result<()> {
+        ctx.accounts.edit_property(
+            seed,
+            name,
+            details,
+            mode_of_payment
+        )?;
+
+        Ok(())
+    }
+
+    pub fn delete_property(
+        ctx: Context<DeleteProperty>
+    ) -> Result<()> {
+        ctx.accounts.delete_property()?;
+
+        Ok(())
+    }
+
+    pub fn like_property(
+        ctx: Context<LikeProperty>
+    ) -> Result<()> {
+        ctx.accounts.like_property()?;
+
+        Ok(())
+    }
+
+    pub fn save_property(
+        ctx: Context<SaveProperty>
+    ) -> Result<()> {
+        ctx.accounts.save_property()?;
+
+        Ok(())
+    }
+
+    pub fn review_property(
+        ctx: Context<ReviewProperty>,
+        review_text: String
+    ) -> Result<()> {
+        ctx.accounts.review_property(review_text)?;
+
+        Ok(())
+    }
+
+    pub fn rate_property(
+        ctx: Context<RateProperty>,
+        rate: u8
+    ) -> Result<()> {
+        ctx.accounts.rate_property(
+            rate
+        )?;
+
+        Ok(())
+    }
+    
 }

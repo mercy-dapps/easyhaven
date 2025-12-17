@@ -11,7 +11,7 @@ describe("easyhaven", () => {
 
   const program = anchor.workspace.easyhaven as Program<Easyhaven>;
 
-  const [owner, user] = Array.from({ length: 2 }, () => Keypair.generate());
+  const [user2, user] = Array.from({ length: 2 }, () => Keypair.generate());
 
   async function airdropSol(publicKey, amount) {
     let airdropTx = await provider.connection.requestAirdrop(publicKey, amount);
@@ -39,8 +39,18 @@ describe("easyhaven", () => {
     program.programId
   )[0];
 
+  const mercy_buyer2 = PublicKey.findProgramAddressSync(
+    [Buffer.from("buyer"), user2.publicKey.toBuffer()],
+    program.programId
+  )[0];
+
   const mercy_user = PublicKey.findProgramAddressSync(
     [Buffer.from("user"), user.publicKey.toBuffer()],
+    program.programId
+  )[0];
+
+  const mercy_user2 = PublicKey.findProgramAddressSync(
+    [Buffer.from("user"), user2.publicKey.toBuffer()],
     program.programId
   )[0];
 
@@ -90,10 +100,10 @@ describe("easyhaven", () => {
   };
 
   it("airdrop", async () => {
-    await Promise.all([owner, user].map((a) => airdropSol(a.publicKey, 1e9)));
+    await Promise.all([user2, user].map((a) => airdropSol(a.publicKey, 1e9)));
   });
 
-  it("Create Mercy user", async () => {
+  it("Create users", async () => {
     const { name, email, phone_number, location } = mercyUser;
 
     await program.methods
@@ -102,9 +112,22 @@ describe("easyhaven", () => {
       .signers([user])
       .rpc();
 
-    const userAccount = await program.account.user.fetch(mercy_user);
+    await program.methods
+      .createUser("user2", "user2@mail.com", "09012345678", "Lagos, Nigeria")
+      .accounts({
+        userKey: user2.publicKey,
+      })
+      .signers([user2])
+      .rpc();
 
-    console.log(`User: ${JSON.stringify(userAccount)}`);
+    const userAccount = await program.account.user.fetch(mercy_user);
+    const userAccount2 = await program.account.user.fetch(mercy_user2);
+
+    console.log(
+      `Created users: ${JSON.stringify(userAccount)}, ${JSON.stringify(
+        userAccount2
+      )}`
+    );
   });
 
   it("Mercy wants to update her buyer details", async () => {
@@ -133,11 +156,35 @@ describe("easyhaven", () => {
       .signers([user])
       .rpc();
 
+    await program.methods
+      .updateBuyerInfo(
+        { male: {} },
+        "",
+        "user2 bio",
+        "Artist",
+        ["Duplex"],
+        ["Ikoyi"],
+        10000000
+      )
+      .accountsPartial({
+        user: mercy_user2,
+        buyer: mercy_buyer2,
+        userKey: user2.publicKey,
+      })
+      .signers([user2])
+      .rpc();
+
     const userAccount = await program.account.user.fetch(mercy_user);
     const buyerAccount = await program.account.buyerInfo.fetch(mercy_buyer);
 
     console.log(`Buyer: ${JSON.stringify(buyerAccount)}`);
     console.log(`User: ${JSON.stringify(userAccount.gender)}`);
+
+    const userAccount2 = await program.account.user.fetch(mercy_user2);
+    const buyerAccount2 = await program.account.buyerInfo.fetch(mercy_buyer2);
+
+    console.log(`Buyer: ${JSON.stringify(buyerAccount2)}`);
+    console.log(`User: ${JSON.stringify(userAccount2.gender)}`);
   });
 
   it("Mercy wants to become a host", async () => {
@@ -151,7 +198,7 @@ describe("easyhaven", () => {
 
     const userAccount = await program.account.user.fetch(mercy_user);
 
-    console.log(`User: ${JSON.stringify(userAccount)}`);
+    console.log(`Become host: ${JSON.stringify(userAccount)}`);
   });
 
   it("Mercy wants to update her owner details", async () => {
@@ -191,7 +238,15 @@ describe("easyhaven", () => {
     const { name, price, location, details } = mercyProperty;
 
     await program.methods
-      .createProperty(seed, name, details, price, location, { rental: {} })
+      .createProperty(
+        seed,
+        name,
+        details,
+        price,
+        location,
+        { rental: {} },
+        { crypto: {} }
+      )
       .accounts({ ...allAccounts })
       .signers([user])
       .rpc();
@@ -208,8 +263,44 @@ describe("easyhaven", () => {
       .signers([user])
       .rpc();
 
-    const appovedProperty = await program.account.property.fetch(mercy_property);
+    const appovedProperty = await program.account.property.fetch(
+      mercy_property
+    );
 
-    console.log(`Approve property: ${JSON.stringify(appovedProperty)}`);
+    console.log(`Approved property: ${JSON.stringify(appovedProperty)}`);
+  });
+
+  it("Review property", async () => {
+    await program.methods
+      .reviewProperty("This is a great property!")
+      .accountsPartial({
+        user: mercy_user2,
+        property: mercy_property,
+        userKey: user2.publicKey,
+      })
+      .signers([user2])
+      .rpc();
+
+    const reviewedProperty = await program.account.property.fetch(
+      mercy_property
+    );
+
+    console.log(`Approved property: ${JSON.stringify(reviewedProperty)}`);
+  });
+
+  it("Rate a property", async () => {
+    await program.methods
+      .rateProperty(4)
+      .accountsPartial({
+        user: mercy_user2,
+        property: mercy_property,
+        userKey: user2.publicKey,
+      })
+      .signers([user2])
+      .rpc();
+
+    const ratedProperty = await program.account.property.fetch(mercy_property);
+
+    console.log(`Rated property: ${JSON.stringify(ratedProperty)}`);
   });
 });

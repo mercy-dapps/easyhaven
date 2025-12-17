@@ -41,6 +41,7 @@ impl<'info> CreateProperty<'info> {
         price: u32,
         location: String,
         property_type: PropertyType,
+        mode_of_payment: PaymentMode,
         bumps: &CreatePropertyBumps
     ) -> Result<()> {
         require!(self.user.user_type == UserType::Owner, EasyHavenErrors::NotAOwner);
@@ -53,6 +54,7 @@ impl<'info> CreateProperty<'info> {
             price, 
             location,
             property_type,
+            mode_of_payment,
             bump: bumps.property,
             ..Default::default()
         });
