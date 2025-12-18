@@ -22,4 +22,7 @@ pub enum EasyHavenErrors {
 
     #[msg("Text is too long.")]
     TextTooLong,
+
+    #[msg("Invalid data provided.")]
+    InvalidData,
 }

@@ -28,6 +28,7 @@ describe("easyhaven", () => {
   }
 
   const seed = new anchor.BN(randomBytes(8));
+  const seed2 = new anchor.BN(randomBytes(8));
 
   const mercy_owner_host = PublicKey.findProgramAddressSync(
     [Buffer.from("owner"), user.publicKey.toBuffer()],
@@ -59,6 +60,15 @@ describe("easyhaven", () => {
       Buffer.from("property"),
       user.publicKey.toBuffer(),
       seed.toArrayLike(Buffer, "le", 8),
+    ],
+    program.programId
+  )[0];
+
+  const mercy_property2 = PublicKey.findProgramAddressSync(
+    [
+      Buffer.from("property"),
+      user.publicKey.toBuffer(),
+      seed2.toArrayLike(Buffer, "le", 8),
     ],
     program.programId
   )[0];
@@ -251,9 +261,30 @@ describe("easyhaven", () => {
       .signers([user])
       .rpc();
 
-    const userAccount = await program.account.property.fetch(mercy_property);
+    const propertyAccount = await program.account.property.fetch(
+      mercy_property
+    );
 
-    console.log(`Property: ${JSON.stringify(userAccount)}`);
+    console.log(`Property: ${JSON.stringify(propertyAccount)}`);
+
+    await program.methods
+      .createProperty(
+        seed2,
+        name,
+        details,
+        price,
+        location,
+        { rental: {} },
+        { crypto: {} }
+      )
+      .accountsPartial({
+        user: mercy_user,
+        owner: mercy_owner_host,
+        userKey: user.publicKey,
+        property: mercy_property2,
+      })
+      .signers([user])
+      .rpc();
   });
 
   it("Approve property", async () => {
@@ -302,5 +333,63 @@ describe("easyhaven", () => {
     const ratedProperty = await program.account.property.fetch(mercy_property);
 
     console.log(`Rated property: ${JSON.stringify(ratedProperty)}`);
+  });
+
+  it("Like a property", async () => {
+    await program.methods
+      .likeProperty(seed)
+      .accountsPartial({
+        user: mercy_user2,
+        property: mercy_property,
+        userKey: user2.publicKey,
+      })
+      .signers([user2])
+      .rpc();
+
+    const likedProperty = await program.account.property.fetch(mercy_property);
+
+    console.log(`liked property: ${JSON.stringify(likedProperty)}`);
+
+    await program.methods
+      .likeProperty(seed)
+      .accountsPartial({
+        user: mercy_user,
+        property: mercy_property,
+        userKey: user.publicKey,
+      })
+      .signers([user])
+      .rpc();
+  });
+
+  it("Save a property", async () => {
+    await program.methods
+      .saveProperty(seed)
+      .accountsPartial({
+        user: mercy_user2,
+        property: mercy_property,
+        userKey: user2.publicKey,
+      })
+      .signers([user2])
+      .rpc();
+
+    const savedProperty = await program.account.property.fetch(mercy_property);
+
+    console.log(`Saved property: ${JSON.stringify(savedProperty)}`);
+  });
+
+  it("fetch liked property", async () => {
+    const allProperty = await program.account.property.all();
+
+    console.log(`All property: ${JSON.stringify(allProperty.length)}`);
+
+    const liked = allProperty.filter((p) =>
+      p.account.likedPubkey.find(
+        (l) => l.toBase58() === user2.publicKey.toBase58()
+      )
+    );
+
+    console.log(
+      `Liked property: $${JSON.stringify(liked)}, count: ${liked.length}`
+    );
   });
 });

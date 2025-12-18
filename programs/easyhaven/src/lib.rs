@@ -143,17 +143,19 @@ pub mod easyhaven {
     }
 
     pub fn like_property(
-        ctx: Context<LikeProperty>
+        ctx: Context<LikeProperty>,
+        seed: u64
     ) -> Result<()> {
-        ctx.accounts.like_property()?;
+        ctx.accounts.like_property(seed)?;
 
         Ok(())
     }
 
     pub fn save_property(
-        ctx: Context<SaveProperty>
+        ctx: Context<SaveProperty>,
+        seed: u64
     ) -> Result<()> {
-        ctx.accounts.save_property()?;
+        ctx.accounts.save_property(seed)?;
 
         Ok(())
     }

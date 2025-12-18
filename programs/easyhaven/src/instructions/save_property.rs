@@ -23,9 +23,11 @@ pub struct SaveProperty<'info> {
 
 impl<'info> SaveProperty<'info> {
     pub fn save_property(
-        &mut self
+        &mut self,
+        seed: u64 
     ) -> Result<()> {
-        require!(self.property.saved_pubkey.len() > 1000, EasyHavenErrors::MaxLengthReached);
+        require!(self.property.seed == seed, EasyHavenErrors::InvalidData);
+        require!(self.property.saved_pubkey.len() < 10, EasyHavenErrors::MaxLengthReached);
 
         self.property.saved_pubkey.push(self.user.user_key);
 
