@@ -179,5 +179,14 @@ pub mod easyhaven {
 
         Ok(())
     }
+
+    pub fn review_owner(
+        ctx: Context<ReviewOwner>,
+        review_text: String
+    ) -> Result<()> {
+        ctx.accounts.review_owner(review_text)?;
+
+        Ok(())
+    }
     
 }
