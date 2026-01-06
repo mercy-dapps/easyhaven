@@ -25,4 +25,7 @@ pub enum EasyHavenErrors {
 
     #[msg("Invalid data provided.")]
     InvalidData,
+
+    #[msg("This action is restricted.")]
+    RestrictedAction,
 }

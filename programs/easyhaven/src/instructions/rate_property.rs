@@ -27,6 +27,7 @@ impl<'info> RateProperty<'info> {
     ) -> Result<()> {
         require!(self.user.user_type == UserType::Buyer, EasyHavenErrors::NotABuyer);
         require!(self.property.rate.len() < 10, EasyHavenErrors::MaxLengthReached);
+        require!(self.property.user_key != self.user_key.key(), EasyHavenErrors::RestrictedAction);
 
         self.property.rate.push(rate);
 

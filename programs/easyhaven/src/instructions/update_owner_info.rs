@@ -12,8 +12,6 @@ pub struct UpdateOwnerInfo<'info> {
 
     #[account(
         mut,
-        seeds = [b"owner", user_key.key().as_ref()],
-        bump = owner.bump
     )]
     pub owner: Account<'info, OwnerInfo>,
 

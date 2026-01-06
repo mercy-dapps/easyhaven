@@ -53,7 +53,7 @@ impl<'info> CreateUser<'info> {
         self.user.buyer_info = Some(self.buyer.key());
 
         self.buyer.set_inner(BuyerInfo { 
-            user: self.user.user_key,
+            user_key: self.user.user_key,
             bump: bumps.buyer,
             ..Default::default()
         });

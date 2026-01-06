@@ -12,8 +12,6 @@ pub struct UpdateBuyerInfo<'info> {
 
     #[account(
         mut,
-        seeds = [b"buyer", user_key.key().as_ref()],
-        bump = buyer.bump
     )]
     pub buyer: Account<'info, BuyerInfo>,
 

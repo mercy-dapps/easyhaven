@@ -29,7 +29,7 @@ impl Space for PaymentMode {
 #[derive(InitSpace, Default)]
 
 pub struct Property {
-    pub user_key: Pubkey,
+    pub user_key: Pubkey, // owner of the property
     pub seed: u64,
     #[max_len(50)]
     pub name: String,
@@ -41,14 +41,13 @@ pub struct Property {
     #[max_len(100)]
     pub location: String, // with google maps link
     pub property_type: PropertyType,
-      pub mode_of_payment: PaymentMode,
+    pub mode_of_payment: PaymentMode,
     #[max_len(100)]
     pub terms_and_conditions: String,
     #[max_len(100)]
     pub agreement: String, // ipfs link to nft representing ownership/rental agreement
 
     pub approved: bool,
-    pub liked_count: u64,
 
     #[max_len(5)]
     pub list_of_owners: Vec<Pubkey>,

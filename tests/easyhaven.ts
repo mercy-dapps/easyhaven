@@ -339,7 +339,6 @@ describe("easyhaven", () => {
     await program.methods
       .likeProperty(seed)
       .accountsPartial({
-        user: mercy_user2,
         property: mercy_property,
         userKey: user2.publicKey,
       })
@@ -350,22 +349,20 @@ describe("easyhaven", () => {
 
     console.log(`liked property: ${JSON.stringify(likedProperty)}`);
 
-    await program.methods
-      .likeProperty(seed)
-      .accountsPartial({
-        user: mercy_user,
-        property: mercy_property,
-        userKey: user.publicKey,
-      })
-      .signers([user])
-      .rpc();
+    // await program.methods
+    //   .likeProperty(seed)
+    //   .accountsPartial({
+    //     property: mercy_property,
+    //     userKey: user.publicKey,
+    //   })
+    //   .signers([user])
+    //   .rpc();
   });
 
   it("Save a property", async () => {
     await program.methods
       .saveProperty(seed)
       .accountsPartial({
-        user: mercy_user2,
         property: mercy_property,
         userKey: user2.publicKey,
       })
@@ -389,7 +386,7 @@ describe("easyhaven", () => {
     );
 
     console.log(
-      `Liked property: $${JSON.stringify(liked)}, count: ${liked.length}`
+      `Liked property: ${JSON.stringify(liked)}, count: ${liked.length}`
     );
   });
 });

@@ -5,7 +5,6 @@ use crate::{EasyHavenErrors, states::*};
 #[derive(Accounts)]
 pub struct ApproveProperty<'info> {
     #[account(
-        mut,
         has_one = user_key
     )]
     pub user: Account<'info, User>,

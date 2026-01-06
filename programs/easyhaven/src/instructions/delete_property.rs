@@ -6,7 +6,6 @@ use crate::{EasyHavenErrors, states::*};
 #[instruction(seed: u64)]
 pub struct DeleteProperty<'info> {
     #[account(
-        mut,
         has_one = user_key
     )]
     pub user: Account<'info, User>,
@@ -20,14 +19,13 @@ pub struct DeleteProperty<'info> {
     #[account(
         mut,
         close = user_key
-        
     )]
     pub property: Account<'info, Property>,
 
     #[account(mut)]
     pub user_key: Signer<'info>,
 
-    pub system_program: Program<'info, System>
+    pub system_program: Program<'info, System> // not sure we need this
 }
 
 impl<'info> DeleteProperty<'info> {

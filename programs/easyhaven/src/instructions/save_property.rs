@@ -6,11 +6,6 @@ use crate::{EasyHavenErrors, states::*};
 #[instruction(seed: u64)]
 pub struct SaveProperty<'info> {
     #[account(
-        has_one = user_key
-    )]
-    pub user: Account<'info, User>,
-
-    #[account(
         mut
     )]
     pub property: Account<'info, Property>,
@@ -28,8 +23,9 @@ impl<'info> SaveProperty<'info> {
     ) -> Result<()> {
         require!(self.property.seed == seed, EasyHavenErrors::InvalidData);
         require!(self.property.saved_pubkey.len() < 10, EasyHavenErrors::MaxLengthReached);
+        require!(self.property.user_key != self.user_key.key(), EasyHavenErrors::RestrictedAction);
 
-        self.property.saved_pubkey.push(self.user.user_key);
+        self.property.saved_pubkey.push(self.user_key.key().clone());
 
         Ok(())
     }

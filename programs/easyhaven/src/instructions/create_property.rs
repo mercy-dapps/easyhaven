@@ -6,7 +6,6 @@ use crate::{EasyHavenErrors, states::*};
 #[instruction(seed: u64)]
 pub struct CreateProperty<'info> {
     #[account(
-        mut,
         has_one = user_key
     )]
     pub user: Account<'info, User>,

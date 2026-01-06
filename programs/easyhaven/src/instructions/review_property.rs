@@ -27,6 +27,7 @@ impl<'info> ReviewProperty<'info> {
     ) -> Result<()> {
         require!(self.user.user_type == UserType::Buyer, EasyHavenErrors::NotABuyer);
         require!(text.len() > 10, EasyHavenErrors::TextTooLong);
+        require!(self.property.user_key != self.user_key.key(), EasyHavenErrors::RestrictedAction);
 
 
         self.property.reviews.push(Review {
